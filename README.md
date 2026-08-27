@@ -27,7 +27,7 @@ A private, browser-only speed reader for PDF, TXT, DOCX, and EPUB documents that
 - **Platforms:** Current desktop and mobile browsers
 - **Stack:** React, TypeScript, Vite, IndexedDB, PDF.js, Mammoth, and JSZip
 
-[![FastReader local library](fast-reader/docs/images/library.png)](fast-reader/)
+[![FastReader actively reading a local test document](fast-reader/docs/images/reader.png)](fast-reader/)
 
 More projects will be added over time. Each project has its own directory, documentation, requirements, and launch instructions.
 
