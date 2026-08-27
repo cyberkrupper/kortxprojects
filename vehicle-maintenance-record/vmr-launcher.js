@@ -93,10 +93,11 @@ const server = http.createServer((req, res) => {
     serveFile(res, HTML_PATH, 'text/html; charset=utf-8');
     return;
   }
-  if (req.method === 'GET' && pathname === '/vmr-data.json') {
+  if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/vmr-data.json') {
     serveFile(res, DATA_PATH, 'application/json; charset=utf-8');
     return;
   }
+
   if (req.method === 'PUT' && pathname === '/vmr-data.json') {
     saveData(req, res);
     return;
