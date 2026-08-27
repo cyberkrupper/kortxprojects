@@ -6,6 +6,19 @@ This repository is the public workshop for practical apps, utilities, and small 
 
 ## Projects
 
+### [WhatsApp Local AI Autopilot](whatsapp-llm-extension/)
+
+A Chrome extension that drafts or automatically sends WhatsApp Web replies with a free, locally running Llama model through Ollama. Local mode requires no API key and keeps model traffic on the configured Ollama host.
+
+- **Status:** Beta
+- **Version:** 3.0.1
+- **Platforms:** Current Google Chrome or Chromium on Windows, macOS, or Linux
+- **Local AI:** Ollama with `llama3.2:1b` (approximately 1.3 GB; no dedicated GPU required)
+- **Recommended system:** 8 GB RAM and at least 6 GB free disk space on Windows
+- **Installation:** [Downloads, setup, testing, upgrades, and removal](whatsapp-llm-extension/docs/INSTALLATION.md)
+
+[![WhatsApp Local AI Autopilot settings](whatsapp-llm-extension/docs/images/settings-popup.jpg)](whatsapp-llm-extension/)
+
 ### [Vehicle Maintenance Record](vehicle-maintenance-record/)
 
 A private, local-first web app for tracking vehicle maintenance, documents, fuel, mileage, and costs.
@@ -35,6 +48,10 @@ More projects will be added over time. Each project has its own directory, docum
 
 ```text
 kortxprojects/
+├── whatsapp-llm-extension/
+│   ├── docs/
+│   ├── README.md
+│   └── ...
 ├── vehicle-maintenance-record/
 │   ├── docs/
 │   ├── README.md

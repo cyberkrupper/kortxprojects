@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WhatsApp Local AI</title>
+  <style>
+    :root { color-scheme: light; font-family: "Segoe UI", system-ui, sans-serif; }
+    body { width: 340px; margin: 0; padding: 18px; background: #f5f7f6; color: #18201d; }
+    h1 { margin: 0 0 4px; color: #075e54; font-size: 20px; }
+    .subtitle { margin: 0 0 18px; color: #5b6762; font-size: 12px; }
+    .group { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 650; }
+    select, input, textarea, button { box-sizing: border-box; width: 100%; font: inherit; }
+    select, input, textarea { padding: 9px; border: 1px solid #cbd3d0; border-radius: 7px; background: white; }
+    textarea { min-height: 72px; resize: vertical; }
+    button { padding: 10px; border: 0; border-radius: 7px; background: #128c7e; color: white; cursor: pointer; font-weight: 700; }
+    button.secondary { margin-top: 8px; border: 1px solid #128c7e; background: white; color: #128c7e; }
+    button:disabled { cursor: wait; opacity: .65; }
+    .note { margin-top: 4px; color: #66726e; font-size: 11px; line-height: 1.35; }
+    .warning { padding: 9px; border-radius: 7px; background: #fff5d7; color: #594500; }
+    .hidden { display: none; }
+    #status { min-height: 18px; margin-top: 10px; font-size: 12px; text-align: center; }
+    #status.error { color: #b42318; }
+    #status.success { color: #087443; }
+  </style>
+</head>
+<body>
+  <h1>WhatsApp Local AI</h1>
+  <p class="subtitle">Local Llama through Ollama is the free, private default.</p>
+
+  <div class="group">
+    <label for="provider">AI provider</label>
+    <select id="provider">
+      <option value="ollama">Ollama + Llama (local, free)</option>
+      <option value="gemini">Google Gemini (API key)</option>
+      <option value="openai">OpenAI (paid API key)</option>
+      <option value="custom">OpenAI-compatible API</option>
+    </select>
+  </div>
+
+  <div class="group" id="ollamaUrlGroup">
+    <label for="ollamaBaseUrl">Ollama URL</label>
+    <input id="ollamaBaseUrl" type="url" value="http://localhost:11434" spellcheck="false">
+    <button class="secondary" id="testBtn" type="button">Test Ollama connection</button>
+  </div>
+
+  <div class="group hidden" id="customBaseUrlGroup">
+    <label for="customBaseUrl">API base URL</label>
+    <input id="customBaseUrl" type="url" placeholder="https://api.example.com/v1" spellcheck="false">
+    <div class="note">Chrome will ask permission for this provider's domain.</div>
+  </div>
+
+  <div class="group">
+    <label for="model">Model</label>
+    <select id="model"></select>
+    <input id="customModelInput" class="hidden" type="text" placeholder="Exact model name" spellcheck="false">
+  </div>
+
+  <div class="group hidden" id="apiKeyGroup">
+    <label for="apiKey">API key</label>
+    <input id="apiKey" type="password" autocomplete="off">
+    <div class="note" id="apiKeyNote">Stored locally by Chrome. Never commit keys to this repository.</div>
+  </div>
+
+  <div class="group">
+    <label for="replyMode">Reply mode</label>
+    <select id="replyMode">
+      <option value="send">Send automatically</option>
+      <option value="draft">Create a draft for review</option>
+    </select>
+    <div class="note warning" id="sendWarning">Automatic mode sends AI text without review. Enable it separately in each chat.</div>
+  </div>
+
+  <div class="group">
+    <label for="contextLength">Conversation messages shared with the model</label>
+    <input id="contextLength" type="number" min="1" max="30" value="10">
+  </div>
+
+  <div class="group">
+    <label for="persona">Reply instructions</label>
+    <textarea id="persona" placeholder="Write a friendly, concise reply in the same language..."></textarea>
+  </div>
+
+  <button id="saveBtn" type="button">Save settings</button>
+  <div id="status" role="status" aria-live="polite"></div>
+  <script src="popup.js"></script>
+</body>
+</html>
