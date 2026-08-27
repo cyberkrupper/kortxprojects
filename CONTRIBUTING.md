@@ -20,4 +20,4 @@ Keep pull requests small, explain user-visible behavior, and include updated scr
 - Keep storage access in `src/storage.ts` and parsers in `src/textExtraction.ts`.
 - Preserve keyboard access and responsive behavior.
 
-By contributing, you confirm that you have the right to submit the work. A project license has not yet been selected; discuss licensing with the repository owner before accepting outside contributions.
+By contributing, you confirm that you have the right to submit the work and agree that your contribution will be licensed under the MIT License.

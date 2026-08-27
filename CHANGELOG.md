@@ -8,4 +8,5 @@ All notable changes will be documented here. This project follows semantic versi
 - Added IndexedDB document storage and local reading-position bookmarks.
 - Added static GitHub Pages deployment and continuous integration.
 - Added repository documentation, privacy guidance, requirements, and screenshots.
+- Licensed the project under the MIT License.
 - Removed server logs, shortcuts, uploaded-file storage, and unused starter assets.

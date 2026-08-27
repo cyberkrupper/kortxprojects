@@ -1,6 +1,8 @@
-# Fast Reader
+# FastReader
 
-A private, browser-only speed reader for PDF, TXT, DOCX, and EPUB documents. Files are parsed on-device, saved in the browser's IndexedDB storage, and never sent to a server.
+FastReader is a private, browser-only app for speed-reading PDF, TXT, DOCX, and EPUB documents locally.
+
+Files are parsed on-device, saved in the browser's IndexedDB storage, and never sent to a server.
 
 ![Fast Reader local library](docs/images/library.png)
 
@@ -78,4 +80,4 @@ Repository checks run automatically for pushes and pull requests. See [CONTRIBUT
 
 ## License
 
-No open-source license has been selected yet. Unless the repository owner adds one, normal copyright restrictions apply.
+Licensed under the [MIT License](LICENSE).

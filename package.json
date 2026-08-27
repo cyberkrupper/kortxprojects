@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "A private, browser-only speed reader for local documents.",
+  "license": "MIT",
   "keywords": ["speed-reading", "rsvp", "pdf", "epub", "privacy", "offline-first"],
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
