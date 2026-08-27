@@ -4,7 +4,7 @@ Vehicle Maintenance Record (VMR) is a private, local-first web app for tracking 
 
 ![Vehicle Maintenance Record dashboard](docs/vehicle-maintenance-record.png)
 
-**Status:** Beta · **Version:** 0.1.0 · **License:** MIT
+**Status:** Beta · **Version:** 0.2.0 · **License:** MIT
 
 [Open the live browser demo](https://cyberkrupper.github.io/kortxprojects/vehicle-maintenance-record/VMR.html). The hosted demo uses browser storage or a user-selected JSON file; for automatic local-file saving, use the launcher described below.
 
@@ -13,6 +13,7 @@ Vehicle Maintenance Record (VMR) is a private, local-first web app for tracking 
 - Manage multiple cars or motorcycles.
 - Track documents and expiry dates.
 - Record maintenance with kilometre- and month-based intervals.
+- Choose a display currency and switch all stored distances between kilometres and miles.
 - Log fuel purchases and full-tank consumption data.
 - See overdue items, upcoming work, and annual expenses at a glance.
 - Import and export portable JSON backups.
@@ -33,7 +34,7 @@ You can also launch it from a terminal:
 npm.cmd start
 ```
 
-## Bash setup and launch
+## Linux and macOS setup and launch
 
 There are no packages to install after Node.js is available:
 
@@ -42,10 +43,11 @@ git clone https://github.com/cyberkrupper/kortxprojects.git
 cd kortxprojects/vehicle-maintenance-record
 node --version
 npm run check
-npm run start:no-open
+chmod +x vmr-launcher.sh
+./vmr-launcher.sh
 ```
 
-Open the local URL printed in the terminal. See [REQUIREMENTS.md](REQUIREMENTS.md) for installation checks and platform notes.
+The launcher opens VMR in your default browser. If automatic browser opening is unavailable, it prints the local URL to open manually. Run `./vmr-launcher.sh --no-open` when you only want the URL. See [REQUIREMENTS.md](REQUIREMENTS.md) for installation checks and platform notes.
 
 ## Browser-only use
 
@@ -58,6 +60,10 @@ For the most reliable automatic saving, use `OPEN_VMR.bat` or `npm start`.
 All data stays on your device. The application has no analytics, advertising, remote API, or runtime dependency. Your data may include sensitive values such as registration numbers, VINs, mileage, and costs; do not commit `vmr-data.json` to a public repository.
 
 Back up the data regularly using the app's data-file menu. See the [user guide](docs/USER_GUIDE.md) for usage, backup, restore, and troubleshooting instructions.
+
+## Currency and distance settings
+
+Open **Settings** in the header to choose a currency or distance unit. Currency changes affect symbols and labels only; saved monetary amounts are never converted. Switching between kilometres and miles converts vehicle odometers, service readings, service intervals, and fuel-log distances using the standard `1 mi = 1.609344 km` conversion.
 
 ## Development
 

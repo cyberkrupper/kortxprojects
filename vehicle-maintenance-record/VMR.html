@@ -75,6 +75,7 @@
     .file-pill--unlinked{color:var(--text-3)}
     .file-pill--linked{color:var(--teal);border-color:var(--teal-b)}
     .file-pill--linked:hover{border-color:var(--teal)}
+    .settings-btn{height:31px;padding:0 11px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase}
     .file-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;box-shadow:0 0 6px var(--teal);animation:signal-pulse 2s ease-in-out infinite}
     .file-dot--off{background:var(--text-3);box-shadow:none}
 
@@ -339,7 +340,11 @@
       .app-header__byline{max-width:150px;overflow:hidden;text-overflow:ellipsis}
       .app-header .file-pill{width:34px;padding:0;justify-content:center;font-size:0}
       .app-header .file-pill .file-dot{width:7px;height:7px}
+      .app-header .settings-btn{width:34px;padding:0;font-size:0}
+      .app-header .settings-btn::before{content:'⚙';font-size:15px}
       .detail-header .file-pill{display:none}
+      .detail-header .settings-btn{width:34px;padding:0;font-size:0}
+      .detail-header .settings-btn::before{content:'⚙';font-size:15px}
       .detail-header__actions{gap:5px}
     }
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
@@ -442,7 +447,34 @@ function fsSync() {
 
 // ─── localStorage storage ─────────────────────────────────────────────────────
 const STORAGE_KEY = 'vmr_vehicles';
-const DATA_VERSION = 2;
+const SETTINGS_KEY = 'vmr_settings';
+const DATA_VERSION = 3;
+const KM_PER_MILE = 1.609344;
+const CURRENCIES = ['RON','EUR','USD','GBP','CHF','CAD','AUD','NZD','JPY','SEK','NOK','DKK','PLN','CZK','HUF'];
+const DEFAULT_SETTINGS = { currency: 'RON', distanceUnit: 'km' };
+
+function normalizeSettings(raw) {
+  return {
+    currency: CURRENCIES.includes(raw?.currency) ? raw.currency : DEFAULT_SETTINGS.currency,
+    distanceUnit: raw?.distanceUnit === 'mi' ? 'mi' : DEFAULT_SETTINGS.distanceUnit
+  };
+}
+
+function getSettings() {
+  try { return normalizeSettings(JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}')); }
+  catch { return {...DEFAULT_SETTINGS}; }
+}
+
+function storeSettings(settings) {
+  const clean = normalizeSettings(settings);
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(clean));
+  return clean;
+}
+
+function applyPayloadSettings(data) {
+  if (data && !Array.isArray(data) && data.settings) storeSettings(data.settings);
+  else storeSettings(DEFAULT_SETTINGS); // Version 1–2 files always stored kilometres and RON.
+}
 
 function validDateValue(value) {
   if (!value || typeof value !== 'string') return null;
@@ -497,7 +529,7 @@ function normalizePayload(data) {
 }
 
 function createExportPayload(vehicles) {
-  return { app: 'VMR', version: DATA_VERSION, exportedAt: new Date().toISOString(), vehicles };
+  return { app: 'VMR', version: DATA_VERSION, exportedAt: new Date().toISOString(), settings: getSettings(), vehicles };
 }
 
 function getVehicles() {
@@ -520,6 +552,41 @@ function addVehicle(v)      { const vs = getVehicles(); vs.push(v); saveVehicles
 function updateVehicle(u)   { saveVehicles(getVehicles().map(v => v.id === u.id ? u : v)); }
 function deleteVehicle(id)  { saveVehicles(getVehicles().filter(v => v.id !== id)); }
 
+function convertedDistance(value, factor) {
+  if (value == null || value === '') return value;
+  return Math.round(Number(value) * factor * 1000) / 1000;
+}
+
+function convertVehicleDistances(vehicle, factor) {
+  return {
+    ...vehicle,
+    currentMileage: convertedDistance(vehicle.currentMileage, factor),
+    maintenanceRecords: vehicle.maintenanceRecords.map(record => ({
+      ...record,
+      mileage: convertedDistance(record.mileage, factor),
+      intervalKm: convertedDistance(record.intervalKm, factor)
+    })),
+    fuelRecords: vehicle.fuelRecords.map(record => ({
+      ...record,
+      mileage: convertedDistance(record.mileage, factor)
+    })),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function saveAppSettings(nextSettings) {
+  const previous = getSettings();
+  const next = normalizeSettings(nextSettings);
+  storeSettings(next);
+  if (previous.distanceUnit !== next.distanceUnit) {
+    const factor = previous.distanceUnit === 'km' ? 1 / KM_PER_MILE : KM_PER_MILE;
+    saveVehicles(getVehicles().map(vehicle => convertVehicleDistances(vehicle, factor)));
+  } else {
+    fsSync();
+  }
+  return { previous, next };
+}
+
 // ─── Utilities ────────────────────────────────────────────────────────────────
 function generateId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 function dateToISO(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
@@ -532,11 +599,15 @@ function formatDate(s) {
 }
 function formatMileage(m) {
   if (m == null || m === '') return '—';
-  return Number(m).toLocaleString('ro-RO') + ' km';
+  return Number(m).toLocaleString(undefined, { maximumFractionDigits: 1 }) + ' ' + distanceUnit();
 }
 function formatMoney(value) {
-  return Number(value || 0).toLocaleString('ro-RO', { style:'currency', currency:'RON', minimumFractionDigits:2 });
+  return Number(value || 0).toLocaleString(undefined, { style:'currency', currency:currencyCode(), minimumFractionDigits:2 });
 }
+function currencyCode() { return getSettings().currency; }
+function distanceUnit() { return getSettings().distanceUnit; }
+function distanceUnitName() { return distanceUnit() === 'mi' ? 'miles' : 'kilometres'; }
+function formatDistanceNumber(value) { return Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 }); }
 function esc(str) {
   return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -566,7 +637,8 @@ function getMaintenanceStatus(record, currentMileage) {
   }
   if (remainingKm == null && daysRemaining == null) return null;
   const overdue = (remainingKm != null && remainingKm < 0) || (daysRemaining != null && daysRemaining < 0);
-  const approaching = (remainingKm != null && remainingKm <= 1000) || (daysRemaining != null && daysRemaining <= 30);
+  const approachingDistance = distanceUnit() === 'mi' ? 1000 / KM_PER_MILE : 1000;
+  const approaching = (remainingKm != null && remainingKm <= approachingDistance) || (daysRemaining != null && daysRemaining <= 30);
   return { remainingKm, daysRemaining, dueDate, status: overdue ? 'overdue' : approaching ? 'approaching' : 'safe' };
 }
 function getUpcomingMaintenance(records, currentMileage) {
@@ -642,6 +714,51 @@ function closeModal() {
   root._previousFocus = null;
 }
 
+// ─── App settings ────────────────────────────────────────────────────────────
+function bindSettingsButton() {
+  const button = document.getElementById('settings-btn');
+  if (button) button.onclick = openSettings;
+}
+
+function openSettings() {
+  const settings = getSettings();
+  showModal('Settings', `
+    <form class="form" id="settings-form">
+      <div class="form-row">
+        <label class="form-label" for="settings-currency">Currency</label>
+        <select id="settings-currency" class="form-input">
+          ${CURRENCIES.map(code => `<option value="${code}"${settings.currency===code?' selected':''}>${code}</option>`).join('')}
+        </select>
+        <p class="form-label-hint">Changing currency updates labels only. Saved amounts are not converted.</p>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="settings-distance">Distance unit</label>
+        <select id="settings-distance" class="form-input">
+          <option value="km"${settings.distanceUnit==='km'?' selected':''}>Kilometres (km)</option>
+          <option value="mi"${settings.distanceUnit==='mi'?' selected':''}>Miles (mi)</option>
+        </select>
+        <p class="form-label-hint">Changing units converts odometer readings, service mileages, service intervals, and fuel-log distances using 1 mi = 1.609344 km.</p>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn--ghost" id="settings-cancel">Cancel</button>
+        <button type="submit" class="btn btn--primary">Save Settings</button>
+      </div>
+    </form>`, false, () => {
+      document.getElementById('settings-cancel').onclick = closeModal;
+      document.getElementById('settings-form').onsubmit = event => {
+        event.preventDefault();
+        const result = saveAppSettings({
+          currency: document.getElementById('settings-currency').value,
+          distanceUnit: document.getElementById('settings-distance').value
+        });
+        closeModal();
+        route();
+        const converted = result.previous.distanceUnit !== result.next.distanceUnit;
+        showToast(converted ? `Settings saved. All distances converted to ${distanceUnitName()}.` : 'Settings saved.');
+      };
+    });
+}
+
 // ─── File link UI ─────────────────────────────────────────────────────────────
 function renderFilePill() {
   const el = document.getElementById('file-pill');
@@ -695,7 +812,7 @@ function showLinkModal(required = false) {
       if (!h) return;
       try {
         const fileData = await fsRead();
-        if (fileData) saveVehicles(normalizePayload(fileData));
+        if (fileData) { applyPayloadSettings(fileData); saveVehicles(normalizePayload(fileData)); }
         else if (!await fsWrite(createExportPayload(getVehicles()))) throw new Error('The empty file could not be initialized.');
         closeModal();
         renderFilePill();
@@ -784,7 +901,9 @@ function importJSON() {
     if (!file) return;
     try {
       const text = await file.text();
-      const data = normalizePayload(JSON.parse(text));
+      const payload = JSON.parse(text);
+      applyPayloadSettings(payload);
+      const data = normalizePayload(payload);
       saveVehicles(data);
       showToast(`Imported ${data.length} vehicle${data.length===1?'':'s'}.`);
       route();
@@ -811,16 +930,16 @@ function daysLabel(d) {
 function remainingLabel(km) {
   if (km == null) return '';
   const abs = Math.abs(Math.round(km));
-  if (km < 0) return `Overdue by ${abs.toLocaleString('ro-RO')} km`;
+  if (km < 0) return `Overdue by ${formatDistanceNumber(abs)} ${distanceUnit()}`;
   if (km === 0) return 'Due now';
-  return `Next service in ${abs.toLocaleString('ro-RO')} km`;
+  return `Next service in ${formatDistanceNumber(abs)} ${distanceUnit()}`;
 }
 function upcomingKmLabel(km) {
   if (km == null) return '';
   const abs = Math.abs(Math.round(km));
-  if (km < 0) return `Overdue by ${abs.toLocaleString('ro-RO')} km`;
+  if (km < 0) return `Overdue by ${formatDistanceNumber(abs)} ${distanceUnit()}`;
   if (km === 0) return 'Due now';
-  return `In ${abs.toLocaleString('ro-RO')} km`;
+  return `In ${formatDistanceNumber(abs)} ${distanceUnit()}`;
 }
 function maintenanceTimingLabel(status) {
   const parts = [];
@@ -889,7 +1008,7 @@ function renderMaintItem(record, currentMileage) {
         <span class="maint-item__chip"><span class="maint-item__chip-label">Date</span>${formatDate(record.date)}</span>
         <span class="maint-item__chip"><span class="maint-item__chip-label">At</span>${formatMileage(record.mileage)}</span>
         ${cost?`<span class="maint-item__chip"><span class="maint-item__chip-label">Cost</span>${esc(cost)}</span>`:''}
-        ${record.intervalKm?`<span class="maint-item__chip"><span class="maint-item__chip-label">Interval</span>${Number(record.intervalKm).toLocaleString('ro-RO')} km</span>`:''}
+        ${record.intervalKm?`<span class="maint-item__chip"><span class="maint-item__chip-label">Interval</span>${formatDistanceNumber(record.intervalKm)} ${distanceUnit()}</span>`:''}
         ${record.intervalMonths?`<span class="maint-item__chip"><span class="maint-item__chip-label">Time</span>${Number(record.intervalMonths)} months</span>`:''}
       </div>
       ${record.description?`<p class="maint-item__notes">${esc(record.description)}</p>`:''}
@@ -924,6 +1043,7 @@ function appHeaderHTML() {
         </div>
         <div class="app-header__right" id="header-right">
           <span class="save-status save-status--${esc(_saveStatus)}" id="save-status">${_saveStatus==='saving'?'Saving…':_saveStatus==='error'?'Save failed':'Saved locally'}</span>
+          <button class="btn btn--ghost settings-btn" id="settings-btn" title="Currency and distance settings">Settings</button>
           <button class="file-pill file-pill--unlinked" id="file-pill"></button>
         </div>
       </div>
@@ -947,8 +1067,8 @@ function vehicleFormHTML(v) {
       <div class="form-row"><label class="form-label" for="vf-year">Year</label>
         <input id="vf-year" type="number" class="form-input" value="${esc(v?.year||'')}" placeholder="${CUR_YEAR}" min="1900" max="${CUR_YEAR+2}" />
         <p class="form-error" id="vf-year-err" style="display:none"></p></div>
-      <div class="form-row"><label class="form-label" for="vf-mileage">Current Mileage (km)</label>
-        <input id="vf-mileage" type="number" class="form-input" value="${esc(v?.currentMileage??'')}" placeholder="e.g. 45000" min="0" />
+      <div class="form-row"><label class="form-label" for="vf-mileage">Current Mileage (${distanceUnit()})</label>
+        <input id="vf-mileage" type="number" step="any" class="form-input" value="${esc(v?.currentMileage??'')}" placeholder="e.g. 45000" min="0" />
         <p class="form-error" id="vf-mileage-err" style="display:none"></p></div>
     </div>
     <div class="form-row"><label class="form-label" for="vf-vin">VIN / Chassis Number</label>
@@ -979,7 +1099,7 @@ function docFormHTML(doc) {
         <p class="form-error" id="df-expiry-err" style="display:none"></p></div>
     </div>
     <div class="form-grid-2">
-      <div class="form-row"><label class="form-label" for="df-cost">Cost (optional)</label>
+      <div class="form-row"><label class="form-label" for="df-cost">Cost (${currencyCode()}, optional)</label>
         <input id="df-cost" type="number" min="0" step="0.01" class="form-input" value="${esc(doc?.cost??'')}" placeholder="e.g. 150.00" /></div>
       <div class="form-row"><label class="form-label" for="df-notes">Notes</label>
         <textarea id="df-notes" class="form-input form-textarea" rows="2" placeholder="Optional notes…">${esc(doc?.notes||'')}</textarea></div>
@@ -1008,16 +1128,16 @@ function maintFormHTML(record, currentMileage) {
       <div class="form-row"><label class="form-label" for="mf-date">Service Date *</label>
         <input id="mf-date" type="date" class="form-input" value="${esc(record?.date||todayISO())}" />
         <p class="form-error" id="mf-date-err" style="display:none"></p></div>
-      <div class="form-row"><label class="form-label" for="mf-mileage">Mileage at Service *</label>
-        <input id="mf-mileage" type="number" min="0" class="form-input" value="${esc(record?.mileage??(currentMileage??''))}" placeholder="e.g. 45000" />
+      <div class="form-row"><label class="form-label" for="mf-mileage">Mileage at Service (${distanceUnit()}) *</label>
+        <input id="mf-mileage" type="number" min="0" step="any" class="form-input" value="${esc(record?.mileage??(currentMileage??''))}" placeholder="e.g. 45000" />
         <p class="form-error" id="mf-mileage-err" style="display:none"></p></div>
     </div>
     <div class="form-grid-3">
-      <div class="form-row"><label class="form-label" for="mf-cost">Cost (optional)</label>
+      <div class="form-row"><label class="form-label" for="mf-cost">Cost (${currencyCode()}, optional)</label>
         <input id="mf-cost" type="number" min="0" step="0.01" class="form-input" value="${esc(record?.cost??'')}" placeholder="e.g. 120.00" />
         <p class="form-error" id="mf-cost-err" style="display:none"></p></div>
-      <div class="form-row"><label class="form-label" for="mf-interval">Interval (km) <span class="form-label-hint">— enables tracking</span></label>
-        <input id="mf-interval" type="number" min="1" class="form-input" value="${esc(record?.intervalKm??'')}" placeholder="e.g. 10000" />
+      <div class="form-row"><label class="form-label" for="mf-interval">Interval (${distanceUnit()}) <span class="form-label-hint">— enables tracking</span></label>
+        <input id="mf-interval" type="number" min="1" step="any" class="form-input" value="${esc(record?.intervalKm??'')}" placeholder="e.g. 10000" />
         <p class="form-error" id="mf-interval-err" style="display:none"></p></div>
       <div class="form-row"><label class="form-label" for="mf-months">Interval (months)</label>
         <input id="mf-months" type="number" min="1" class="form-input" value="${esc(record?.intervalMonths??'')}" placeholder="e.g. 12" />
@@ -1031,8 +1151,8 @@ function maintFormHTML(record, currentMileage) {
 
 function mileageFormHTML(currentMileage) {
   return `<form class="form" id="mileage-form" novalidate>
-    <div class="form-row"><label class="form-label" for="mu-val">Current Mileage (km)</label>
-      <input id="mu-val" type="number" min="0" class="form-input form-input--large" value="${esc(currentMileage??'')}" placeholder="e.g. 47500" />
+    <div class="form-row"><label class="form-label" for="mu-val">Current Mileage (${distanceUnit()})</label>
+      <input id="mu-val" type="number" min="0" step="any" class="form-input form-input--large" value="${esc(currentMileage??'')}" placeholder="e.g. 47500" />
       <p class="form-error" id="mu-err" style="display:none"></p></div>
     <div class="form-actions">
       <button type="button" class="btn btn--ghost" id="mu-cancel">Cancel</button>
@@ -1046,8 +1166,8 @@ function fuelFormHTML(record, currentMileage) {
       <div class="form-row"><label class="form-label" for="ff-date">Date *</label>
         <input id="ff-date" type="date" class="form-input" value="${esc(record?.date||todayISO())}" />
         <p class="form-error" id="ff-date-err" style="display:none"></p></div>
-      <div class="form-row"><label class="form-label" for="ff-mileage">Odometer (km) *</label>
-        <input id="ff-mileage" type="number" min="0" class="form-input" value="${esc(record?.mileage??(currentMileage??''))}" />
+      <div class="form-row"><label class="form-label" for="ff-mileage">Odometer (${distanceUnit()}) *</label>
+        <input id="ff-mileage" type="number" min="0" step="any" class="form-input" value="${esc(record?.mileage??(currentMileage??''))}" />
         <p class="form-error" id="ff-mileage-err" style="display:none"></p></div>
     </div>
     <div class="form-grid-3">
@@ -1058,7 +1178,7 @@ function fuelFormHTML(record, currentMileage) {
       <div class="form-row"><label class="form-label" for="ff-litres">Litres *</label>
         <input id="ff-litres" type="number" min="0.01" step="0.01" class="form-input" value="${esc(record?.litres??'')}" placeholder="e.g. 42.5" />
         <p class="form-error" id="ff-litres-err" style="display:none"></p></div>
-      <div class="form-row"><label class="form-label" for="ff-cost">Total cost (RON) *</label>
+      <div class="form-row"><label class="form-label" for="ff-cost">Total cost (${currencyCode()}) *</label>
         <input id="ff-cost" type="number" min="0.01" step="0.01" class="form-input" value="${esc(record?.totalCost??'')}" placeholder="e.g. 320" />
         <p class="form-error" id="ff-cost-err" style="display:none"></p></div>
     </div>
@@ -1123,6 +1243,7 @@ function renderHome() {
     </div>`;
 
   renderFilePill();
+  bindSettingsButton();
   document.querySelectorAll('[data-action="add-vehicle"]').forEach(b => b.onclick = () => openVehicleForm(null, null));
   document.querySelectorAll('[data-action="open-vehicle"]').forEach(b => b.onclick = () => navigate('/vehicle/'+b.dataset.id));
 }
@@ -1143,6 +1264,7 @@ function renderDetail(vehicleId) {
         <button class="back-btn" id="back-btn">← Back</button>
         <div class="detail-header__actions">
           <span class="save-status save-status--${esc(_saveStatus)}" id="save-status">${_saveStatus==='saving'?'Saving…':_saveStatus==='error'?'Save failed':'Saved locally'}</span>
+          <button class="btn btn--ghost settings-btn" id="settings-btn" title="Currency and distance settings">Settings</button>
           <button class="file-pill file-pill--unlinked" id="file-pill" style="font-size:11px"></button>
           <button class="btn btn--ghost btn--sm" id="edit-vehicle-btn">Edit</button>
           <button class="btn btn--ghost btn--sm btn--danger-ghost" id="delete-vehicle-btn">Delete</button>
@@ -1186,6 +1308,7 @@ function renderDetail(vehicleId) {
     ${renderExpenses(vehicle)}`;
 
   renderFilePill();
+  bindSettingsButton();
   document.getElementById('back-btn').onclick = () => navigate('/');
   document.getElementById('edit-vehicle-btn').onclick = () => openVehicleForm(vehicle, vehicleId);
   document.getElementById('delete-vehicle-btn').onclick = () => {
@@ -1365,8 +1488,8 @@ function renderFuelSection(vehicle) {
     ${records.length?`<div class="fuel-stats">
       <div class="fuel-stat"><span class="fuel-stat__label">Total spent</span><span class="fuel-stat__value">${formatMoney(s.totalCost)}</span></div>
       <div class="fuel-stat"><span class="fuel-stat__label">Fuel logged</span><span class="fuel-stat__value">${s.totalLitres.toLocaleString('ro-RO',{maximumFractionDigits:2})} L</span></div>
-      <div class="fuel-stat"><span class="fuel-stat__label">Average price</span><span class="fuel-stat__value">${s.averagePrice?s.averagePrice.toLocaleString('ro-RO',{minimumFractionDigits:2,maximumFractionDigits:2})+' RON/L':'—'}</span></div>
-      <div class="fuel-stat"><span class="fuel-stat__label">Consumption</span><span class="fuel-stat__value">${s.consumption?s.consumption.toLocaleString('ro-RO',{minimumFractionDigits:1,maximumFractionDigits:1})+' L/100 km':'Need 2 full tanks'}</span></div>
+      <div class="fuel-stat"><span class="fuel-stat__label">Average price</span><span class="fuel-stat__value">${s.averagePrice?s.averagePrice.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' '+currencyCode()+'/L':'—'}</span></div>
+      <div class="fuel-stat"><span class="fuel-stat__label">Consumption</span><span class="fuel-stat__value">${s.consumption?s.consumption.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})+' L/100 '+distanceUnit():'Need 2 full tanks'}</span></div>
     </div><div class="fuel-list">${records.map(r=>`<div class="fuel-item">
       <span class="fuel-item__date">${formatDate(r.date)}</span>
       <div class="fuel-item__main"><strong>${esc(r.fuelType)}</strong><span>${Number(r.litres).toLocaleString('ro-RO',{maximumFractionDigits:2})} L</span><span>· ${formatMoney(r.totalCost)}</span><span>· ${formatMileage(r.mileage)}</span>${r.fullTank?'<span class="badge badge--maint-safe">Full</span>':''}${r.notes?`<span style="color:var(--text-2)">${esc(r.notes)}</span>`:''}</div>
@@ -1481,7 +1604,9 @@ async function loadAdjacentDataFile() {
     if (url.protocol === 'file:') return false;
     const response = await fetch(url, { cache: 'no-store' });
     if (!response.ok) return false;
-    saveVehicles(normalizePayload(await response.json()));
+    const payload = await response.json();
+    applyPayloadSettings(payload);
+    saveVehicles(normalizePayload(payload));
     _localServerLinked = response.headers.get('X-VMR-Local-Server') === '1';
     setSaveStatus('saved');
     return true;
@@ -1523,7 +1648,9 @@ function showRequiredImportFallback() {
         const file = input.files[0];
         if (!file) return;
         try {
-          saveVehicles(normalizePayload(JSON.parse(await file.text())));
+          const payload = JSON.parse(await file.text());
+          applyPayloadSettings(payload);
+          saveVehicles(normalizePayload(payload));
           closeModal();
           route();
         } catch (e) {
