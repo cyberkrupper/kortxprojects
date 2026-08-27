@@ -32,8 +32,8 @@ If `node` or `npm` is not found, install a current Node.js LTS release from [nod
 ## Clone and run from Bash
 
 ```bash
-git clone <repository-url>
-cd vehicle-maintenance-record
+git clone https://github.com/cyberkrupper/kortxprojects.git
+cd kortxprojects/vehicle-maintenance-record
 npm run check
 npm run start:no-open
 ```
@@ -43,8 +43,8 @@ Open the `http://127.0.0.1:.../VMR.html` address printed in the terminal. On fir
 ## Clone and run from PowerShell
 
 ```powershell
-git clone <repository-url>
-Set-Location vehicle-maintenance-record
+git clone https://github.com/cyberkrupper/kortxprojects.git
+Set-Location kortxprojects\vehicle-maintenance-record
 npm.cmd run check
 npm.cmd start
 ```

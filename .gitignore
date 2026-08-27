@@ -1,6 +1,13 @@
 # Private runtime data: may contain registration, VIN, mileage, and cost details.
-vmr-data.json
-vmr-data.json.tmp
+**/vmr-data.json
+**/vmr-data.json.tmp
+
+# Secrets and local configuration
+**/.env
+**/.env.*
+!**/.env.example
+*.sqlite
+*.sqlite3
 
 # Logs and local tooling
 *.log
@@ -12,3 +19,5 @@ Thumbs.db
 # Node package managers (the application has no runtime dependencies)
 node_modules/
 coverage/
+dist/
+build/
