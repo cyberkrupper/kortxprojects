@@ -11,6 +11,17 @@ const HTML_PATH = path.join(ROOT, 'VMR.html');
 const DATA_PATH = path.join(ROOT, 'vmr-data.json');
 const MAX_DATA_BYTES = 10 * 1024 * 1024;
 
+function openBrowser(url) {
+  const launchers = {
+    win32: { command: 'cmd.exe', args: ['/c', 'start', '', url] },
+    darwin: { command: 'open', args: [url] }
+  };
+  const launcher = launchers[process.platform] || { command: 'xdg-open', args: [url] };
+  const opener = spawn(launcher.command, launcher.args, { detached: true, stdio: 'ignore', windowsHide: true });
+  opener.on('error', () => console.log('Could not open a browser automatically. Open ' + url));
+  opener.unref();
+}
+
 function send(res, status, body, contentType = 'text/plain; charset=utf-8') {
   res.writeHead(status, {
     'Content-Type': contentType,
@@ -116,8 +127,7 @@ server.listen(0, HOST, () => {
   console.log('Keep this window open while using VMR. Press Ctrl+C to stop.');
 
   if (!process.argv.includes('--no-open')) {
-    const opener = spawn('cmd.exe', ['/c', 'start', '', url], { detached: true, stdio: 'ignore', windowsHide: true });
-    opener.unref();
+    openBrowser(url);
   }
 });
 

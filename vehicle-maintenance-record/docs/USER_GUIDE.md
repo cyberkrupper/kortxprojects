@@ -6,6 +6,15 @@ On Windows, double-click `OPEN_VMR.bat`. The launcher starts a local server and 
 
 Alternatively, run `npm start` from the project directory. Node.js 18 or newer is required, but no packages need to be installed.
 
+On Linux or macOS, run:
+
+```bash
+chmod +x vmr-launcher.sh
+./vmr-launcher.sh
+```
+
+Use `./vmr-launcher.sh --no-open` to print the local URL without opening a browser automatically.
+
 ## Adding a vehicle
 
 Choose **Add vehicle**, then enter at least the registration plate and model. Year, current mileage, and VIN are optional. Each plate or VIN must be unique.
@@ -18,7 +27,18 @@ Open a vehicle card to:
 - record fuel quantity, cost, odometer value, and whether it was a full tank;
 - review upcoming maintenance and expenses.
 
-VMR uses `km` for distance and `RON` for money in the current interface.
+## Currency and distance settings
+
+Choose **Settings** in the header to configure:
+
+- the displayed currency, including RON, EUR, USD, GBP, CHF, CAD, AUD, JPY, and other common currencies;
+- kilometres (`km`) or miles (`mi`) for distance.
+
+Changing currency updates monetary symbols and labels without changing any saved amount. For example, an amount of `100` remains `100` when changing from RON to EUR.
+
+Changing the distance unit converts current odometers, maintenance mileages, distance-based service intervals, and fuel-log odometers. VMR uses the standard conversion `1 mi = 1.609344 km`; `160,000 km` therefore becomes approximately `99,419 mi`. Changing back to kilometres restores approximately the original values, subject only to small rounding differences.
+
+Settings are saved in browser storage and included in exported or launcher-managed `vmr-data.json` files.
 
 ## How saving works
 

@@ -11,7 +11,7 @@ This repository is the public workshop for practical apps, utilities, and small 
 A private, local-first web app for tracking vehicle maintenance, documents, fuel, mileage, and costs.
 
 - **Status:** Beta
-- **Version:** 0.1.0
+- **Version:** 0.2.0
 - **Platforms:** Windows, macOS, and Linux with Node.js 18+; browser-only mode is also available
 - **Stack:** HTML, CSS, vanilla JavaScript, and Node.js
 - **Demo:** [Open VMR in your browser](https://cyberkrupper.github.io/kortxprojects/vehicle-maintenance-record/VMR.html)
