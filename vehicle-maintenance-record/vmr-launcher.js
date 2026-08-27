@@ -11,6 +11,17 @@ const HTML_PATH = path.join(ROOT, 'VMR.html');
 const DATA_PATH = path.join(ROOT, 'vmr-data.json');
 const MAX_DATA_BYTES = 10 * 1024 * 1024;
 
+function openBrowser(url) {
+  const launchers = {
+    win32: { command: 'cmd.exe', args: ['/c', 'start', '', url] },
+    darwin: { command: 'open', args: [url] }
+  };
+  const launcher = launchers[process.platform] || { command: 'xdg-open', args: [url] };
+  const opener = spawn(launcher.command, launcher.args, { detached: true, stdio: 'ignore', windowsHide: true });
+  opener.on('error', () => console.log('Could not open a browser automatically. Open ' + url));
+  opener.unref();
+}
+
 function send(res, status, body, contentType = 'text/plain; charset=utf-8') {
   res.writeHead(status, {
     'Content-Type': contentType,
@@ -93,11 +104,10 @@ const server = http.createServer((req, res) => {
     serveFile(res, HTML_PATH, 'text/html; charset=utf-8');
     return;
   }
-  if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/vmr-data.json') {
+  if (req.method === 'GET' && pathname === '/vmr-data.json') {
     serveFile(res, DATA_PATH, 'application/json; charset=utf-8');
     return;
   }
-
   if (req.method === 'PUT' && pathname === '/vmr-data.json') {
     saveData(req, res);
     return;
@@ -117,25 +127,7 @@ server.listen(0, HOST, () => {
   console.log('Keep this window open while using VMR. Press Ctrl+C to stop.');
 
   if (!process.argv.includes('--no-open')) {
-    let command;
-    let args;
-
-    if (process.platform === 'win32') {
-      command = 'cmd.exe';
-      args = ['/c', 'start', '', url];
-    } else if (process.platform === 'darwin') {
-      command = 'open';
-      args = [url];
-    } else {
-      command = 'xdg-open';
-      args = [url];
-    }
-
-    const opener = spawn(command, args, { detached: true, stdio: 'ignore', windowsHide: true });
-    opener.on('error', (err) => {
-      console.warn('Could not auto-open browser:', err.message);
-    });
-    opener.unref();
+    openBrowser(url);
   }
 });
 
