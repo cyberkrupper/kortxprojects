@@ -1,0 +1,16 @@
+{
+  "name": "vehicle-maintenance-record",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A private, local-first vehicle maintenance and expense tracker.",
+  "author": "KORT-X Laboratories",
+  "license": "MIT",
+  "scripts": {
+    "start": "node vmr-launcher.js",
+    "start:no-open": "node vmr-launcher.js --no-open",
+    "check": "node --check vmr-launcher.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

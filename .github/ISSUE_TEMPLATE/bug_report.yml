@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a reproducible problem in VMR.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Do not attach real vehicle data, VINs, registration numbers, or private backups.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Start VMR...\n2. Open...\n3. Select..."
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, browser version, and Node.js version.
+    validations:
+      required: true
+  - type: dropdown
+    id: launch-method
+    attributes:
+      label: Launch method
+      options:
+        - OPEN_VMR.bat or npm start
+        - Opened VMR.html directly
+    validations:
+      required: true

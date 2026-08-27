@@ -1,24 +1,41 @@
 # KORT-X Projects
 
-A collection of **free utilities, practical apps, small tools, and random software projects** built under **KORT-X**.
+Open-source projects and experimental tools from **KORT-X Laboratories**.
 
-This repository is for things made to be **used**, shared, or simply put out into the world.
-
-Research, prototypes, experiments, and exploratory work live separately in **KORT-X Research**.
+This repository is the public workshop for practical apps, utilities, and small tools built to be used, shared, and improved. Research prototypes and exploratory work live separately under KORT-X Research.
 
 ## Projects
 
-### Vehicle Maintenance Record
+### [Vehicle Maintenance Record](vehicle-maintenance-record/)
 
-A simple web app for tracking vehicle maintenance, repairs, service history, parts, costs, and related records.
+A private, local-first web app for tracking vehicle maintenance, documents, fuel, mileage, and costs.
 
-More tools and projects will be added over time.
+- **Status:** Beta
+- **Version:** 0.1.0
+- **Platforms:** Windows, macOS, and Linux with Node.js 18+; browser-only mode is also available
+- **Stack:** HTML, CSS, vanilla JavaScript, and Node.js
 
-## What belongs here
+[![Vehicle Maintenance Record dashboard](vehicle-maintenance-record/docs/vehicle-maintenance-record.png)](vehicle-maintenance-record/)
 
-* Free utilities
-* Small web apps
-* Practical tools
-* Useful scripts
-* Side projects
-* Random stuff worth publishing
+More projects will be added over time. Each project has its own directory, documentation, requirements, and launch instructions.
+
+## Repository layout
+
+```text
+kortxprojects/
+├── vehicle-maintenance-record/
+│   ├── docs/
+│   ├── README.md
+│   └── ...
+├── CONTRIBUTING.md
+├── SECURITY.md
+└── README.md
+```
+
+## Contributing and security
+
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Report suspected vulnerabilities according to [SECURITY.md](SECURITY.md), not through a public issue.
+
+## License
+
+Released under the [MIT License](LICENSE). Copyright (c) 2026 KORT-X Laboratories.
