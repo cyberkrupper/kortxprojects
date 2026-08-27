@@ -6,6 +6,8 @@ Vehicle Maintenance Record (VMR) is a private, local-first web app for tracking 
 
 **Status:** Beta · **Version:** 0.1.0 · **License:** MIT
 
+[Open the live browser demo](https://cyberkrupper.github.io/kortxprojects/vehicle-maintenance-record/VMR.html). The hosted demo uses browser storage or a user-selected JSON file; for automatic local-file saving, use the launcher described below.
+
 ## Features
 
 - Manage multiple cars or motorcycles.
