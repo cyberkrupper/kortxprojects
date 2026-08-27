@@ -1,0 +1,31 @@
+name: Bug report
+description: Report reproducible incorrect behavior
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: What happened?
+      description: Describe the behavior without attaching private documents.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Browser and version
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Document format
+      options: [TXT, PDF, DOCX, EPUB, Not applicable]
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Remove document contents, local paths, and other private data from logs or screenshots.

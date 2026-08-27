@@ -18,6 +18,17 @@ A private, local-first web app for tracking vehicle maintenance, documents, fuel
 
 [![Vehicle Maintenance Record dashboard](vehicle-maintenance-record/docs/vehicle-maintenance-record.png)](vehicle-maintenance-record/)
 
+### [FastReader](fast-reader/)
+
+A private, browser-only speed reader for PDF, TXT, DOCX, and EPUB documents that processes and stores files locally.
+
+- **Status:** Stable
+- **Version:** 1.0.0
+- **Platforms:** Current desktop and mobile browsers
+- **Stack:** React, TypeScript, Vite, IndexedDB, PDF.js, Mammoth, and JSZip
+
+[![FastReader local library](fast-reader/docs/images/library.png)](fast-reader/)
+
 More projects will be added over time. Each project has its own directory, documentation, requirements, and launch instructions.
 
 ## Repository layout
@@ -25,6 +36,10 @@ More projects will be added over time. Each project has its own directory, docum
 ```text
 kortxprojects/
 ├── vehicle-maintenance-record/
+│   ├── docs/
+│   ├── README.md
+│   └── ...
+├── fast-reader/
 │   ├── docs/
 │   ├── README.md
 │   └── ...

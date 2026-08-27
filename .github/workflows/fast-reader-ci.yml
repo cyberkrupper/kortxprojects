@@ -1,0 +1,32 @@
+name: FastReader CI
+
+on:
+  push:
+    branches: [main, FastReader]
+    paths:
+      - fast-reader/**
+      - .github/workflows/fast-reader-ci.yml
+  pull_request:
+    paths:
+      - fast-reader/**
+      - .github/workflows/fast-reader-ci.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fast-reader
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: fast-reader/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
