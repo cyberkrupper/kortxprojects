@@ -1,0 +1,14 @@
+# Private runtime data: may contain registration, VIN, mileage, and cost details.
+vmr-data.json
+vmr-data.json.tmp
+
+# Logs and local tooling
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Node package managers (the application has no runtime dependencies)
+node_modules/
+coverage/

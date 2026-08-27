@@ -1,24 +1,75 @@
-# KORT-X Projects
+# Vehicle Maintenance Record
 
-A collection of **free utilities, practical apps, small tools, and random software projects** built under **KORT-X**.
+Vehicle Maintenance Record (VMR) is a private, local-first web app for tracking vehicles, documents, service history, fuel, mileage, costs, and upcoming maintenance. It runs on your computer, requires no account, and sends no data to a cloud service.
 
-This repository is for things made to be **used**, shared, or simply put out into the world.
+## Features
 
-Research, prototypes, experiments, and exploratory work live separately in **KORT-X Research**.
+- Manage multiple cars or motorcycles.
+- Track documents and expiry dates.
+- Record maintenance with kilometre- and month-based intervals.
+- Log fuel purchases and full-tank consumption data.
+- See overdue items, upcoming work, and annual expenses at a glance.
+- Import and export portable JSON backups.
+- Store data in a local `vmr-data.json` file when using the launcher.
 
-## Projects
+## Quick start on Windows
 
-### Vehicle Maintenance Record
+1. Install [Node.js](https://nodejs.org/) 18 or newer (see [requirements](REQUIREMENTS.md)).
+2. Download or clone this repository.
+3. Double-click `OPEN_VMR.bat`.
+4. Keep the terminal window open while using VMR.
 
-A simple web app for tracking vehicle maintenance, repairs, service history, parts, costs, and related records.
+On first use, VMR prompts you to create or select a private `vmr-data.json`. Every later change is saved to the linked file. It is excluded from Git so vehicle details are not uploaded accidentally.
 
-More tools and projects will be added over time.
+You can also launch it from a terminal:
 
-## What belongs here
+```powershell
+npm.cmd start
+```
 
-* Free utilities
-* Small web apps
-* Practical tools
-* Useful scripts
-* Side projects
-* Random stuff worth publishing
+## Bash setup and launch
+
+There are no packages to install after Node.js is available:
+
+```bash
+git clone <repository-url>
+cd vehicle-maintenance-record
+node --version
+npm run check
+npm run start:no-open
+```
+
+Open the local URL printed in the terminal. Replace `<repository-url>` with this repository's HTTPS or SSH clone URL. See [REQUIREMENTS.md](REQUIREMENTS.md) for installation checks and platform notes.
+
+## Browser-only use
+
+Open `VMR.html` directly in a modern browser. VMR will ask you to select or create a JSON data file. If the browser does not support direct file linking, VMR stores its working copy in browser storage and lets you import or export backups manually.
+
+For the most reliable automatic saving, use `OPEN_VMR.bat` or `npm start`.
+
+## Data and privacy
+
+All data stays on your device. The application has no analytics, advertising, remote API, or runtime dependency. Your data may include sensitive values such as registration numbers, VINs, mileage, and costs; do not commit `vmr-data.json` to a public repository.
+
+Back up the data regularly using the app's data-file menu. See the [user guide](docs/USER_GUIDE.md) for usage, backup, restore, and troubleshooting instructions.
+
+## Development
+
+The interface is contained in `VMR.html`; `vmr-launcher.js` provides a small local HTTP server and safe JSON persistence. No build step or package installation is required.
+
+```powershell
+npm.cmd run check
+npm.cmd run start:no-open
+```
+
+The server listens only on `127.0.0.1` and selects an available port. Press `Ctrl+C` to stop it.
+
+## Contributing and security
+
+Contributions are welcome; read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Please report security concerns according to [SECURITY.md](SECURITY.md), not in a public issue.
+
+Repository owners can follow the [GitHub publishing guide](docs/PUBLISHING.md) for the initial push.
+
+## License
+
+Released under the [MIT License](LICENSE). Copyright (c) 2026 KORT-X Laboratories.
