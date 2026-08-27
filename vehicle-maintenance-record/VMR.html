@@ -372,6 +372,22 @@ let _saveStatus = 'saved';
 function fsLinked() { return _fileHandle !== null || _localServerLinked; }
 function fsFileName() { return _fileHandle ? _fileHandle.name : (_localServerLinked ? 'vmr-data.json' : null); }
 
+// Auto-detect if served by the local Node.js server on startup
+async function checkLocalServer() {
+  try {
+    const res = await fetch('vmr-data.json', { method: 'HEAD' });
+    if (res.headers.get('X-VMR-Local-Server') === '1') {
+      _localServerLinked = true;
+      console.log('Linked to local VMR Node server.');
+    }
+  } catch (e) {
+    _localServerLinked = false;
+  }
+}
+
+// Call server detection immediately when page initializes
+checkLocalServer();
+
 async function fsOpenExisting() {
   try {
     const [h] = await window.showOpenFilePicker({
@@ -386,6 +402,14 @@ async function fsOpenExisting() {
 }
 
 async function fsCreateNew() {
+  // If we are running on the local Node server, skip the browser file picker
+  if (_localServerLinked) {
+    _fileHandle = null; // Clear file handle so it defaults to server PUT requests
+    await fsWrite({ vehicles: [] }); // Initialize empty structure via HTTP PUT
+    return true;
+  }
+
+  // Fallback for standalone browser mode without Node server
   try {
     const h = await window.showSaveFilePicker({
       id: 'vmr-data-file',
@@ -396,8 +420,12 @@ async function fsCreateNew() {
     _localServerLinked = false;
     _fileHandle = h;
     return h;
-  } catch (e) { if (e.name !== 'AbortError') console.error(e); return null; }
+  } catch (e) {
+    if (e.name !== 'AbortError') console.error(e);
+    return null;
+  }
 }
+
 
 async function fsRead() {
   if (!_fileHandle) return null;
