@@ -1,0 +1,6 @@
+anthropic>=0.40
+requests>=2.31
+# tkinter ships with CPython on Windows and macOS; on Linux install
+# python3-tk from your distribution.
+# Build-time only:
+pyinstaller>=6.0

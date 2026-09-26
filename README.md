@@ -42,6 +42,16 @@ A private, browser-only speed reader for PDF, TXT, DOCX, and EPUB documents that
 
 [![FastReader actively reading a local test document](fast-reader/docs/images/reader.png)](fast-reader/)
 
+### [Collaborator MCP](collaborator-mcp/)
+
+A desktop app and MCP server that lets AI models work as a team: one orchestrates, another executes tasks with file tools in your workspace, and helper models take on small jobs. Any model can take any role, and it runs on Claude Code / Codex subscriptions or API keys.
+
+- **Status:** Beta
+- **Version:** 1.3.0
+- **Platforms:** Windows 10/11 (Python 3.10+ to run from source)
+- **Stack:** Python, Tkinter, MCP over stdio
+- **Setup:** [Requirements and how to run](collaborator-mcp/REQUIREMENTS.md)
+
 More projects will be added over time. Each project has its own directory, documentation, requirements, and launch instructions.
 
 ## Repository layout
@@ -58,6 +68,10 @@ kortxprojects/
 │   └── ...
 ├── fast-reader/
 │   ├── docs/
+│   ├── README.md
+│   └── ...
+├── collaborator-mcp/
+│   ├── collaborator/
 │   ├── README.md
 │   └── ...
 ├── CONTRIBUTING.md

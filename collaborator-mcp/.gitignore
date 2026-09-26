@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+build/
+dist/
+*.spec
+build*.log
+.claude/
+.venv/
+venv/
+# Local app data (settings, history, keys) lives outside the repo, but just in case:
+settings.json
+*.db
+*.sqlite*
