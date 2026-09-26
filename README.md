@@ -6,6 +6,19 @@ This repository is the public workshop for practical apps, utilities, and small 
 
 ## Projects
 
+### [Collaborator MCP](collaborator-mcp/)
+
+A desktop app and MCP server that lets AI models work as a team: one orchestrates, another executes tasks with file tools in your workspace, and helper models take on small jobs. Any model can take any role, and it runs on Claude Code / Codex subscriptions or API keys.
+
+- **Status:** Beta
+- **Version:** 1.3.0
+- **Platforms:** Windows 10/11 (Python 3.10+ to run from source)
+- **Stack:** Python, Tkinter, MCP over stdio
+- **Setup:** [Requirements and how to run](collaborator-mcp/REQUIREMENTS.md)
+- **License:** [Free for noncommercial use](collaborator-mcp/LICENSE); commercial use or resale requires a separate paid license
+
+[![Collaborator MCP desktop app showing an orchestrator goal and helper team](collaborator-mcp/docs/collaborator-mcp.png)](collaborator-mcp/)
+
 ### [WhatsApp Local AI Autopilot](whatsapp-llm-extension/)
 
 A Chrome extension that drafts or automatically sends WhatsApp Web replies with a free, locally running Llama model through Ollama. Local mode requires no API key and keeps model traffic on the configured Ollama host.
@@ -41,19 +54,6 @@ A private, browser-only speed reader for PDF, TXT, DOCX, and EPUB documents that
 - **Stack:** React, TypeScript, Vite, IndexedDB, PDF.js, Mammoth, and JSZip
 
 [![FastReader actively reading a local test document](fast-reader/docs/images/reader.png)](fast-reader/)
-
-### [Collaborator MCP](collaborator-mcp/)
-
-A desktop app and MCP server that lets AI models work as a team: one orchestrates, another executes tasks with file tools in your workspace, and helper models take on small jobs. Any model can take any role, and it runs on Claude Code / Codex subscriptions or API keys.
-
-- **Status:** Beta
-- **Version:** 1.3.0
-- **Platforms:** Windows 10/11 (Python 3.10+ to run from source)
-- **Stack:** Python, Tkinter, MCP over stdio
-- **Setup:** [Requirements and how to run](collaborator-mcp/REQUIREMENTS.md)
-- **License:** [Free for noncommercial use](collaborator-mcp/LICENSE); commercial use or resale requires a separate paid license
-
-[![Collaborator MCP desktop app showing an orchestrator goal and helper team](collaborator-mcp/docs/collaborator-mcp.png)](collaborator-mcp/)
 
 More projects will be added over time. Each project has its own directory, documentation, requirements, and launch instructions.
 
