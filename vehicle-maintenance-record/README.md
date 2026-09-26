@@ -84,4 +84,4 @@ Repository owners can follow the [release guide](docs/RELEASING.md) when publish
 
 ## License
 
-Released under the [MIT License](LICENSE). Copyright (c) 2026 KORT-X Laboratories.
+Released under the repository's [MIT License](../LICENSE). Copyright (c) 2026 KORT-X Laboratories.

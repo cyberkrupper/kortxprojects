@@ -1,6 +1,6 @@
 # KORT-X Projects
 
-Open-source projects and experimental tools from **KORT-X Laboratories**.
+Software projects and experimental tools from **KORT-X Laboratories**.
 
 This repository is the public workshop for practical apps, utilities, and small tools built to be used, shared, and improved. Research prototypes and exploratory work live separately under KORT-X Research.
 
@@ -51,6 +51,7 @@ A desktop app and MCP server that lets AI models work as a team: one orchestrate
 - **Platforms:** Windows 10/11 (Python 3.10+ to run from source)
 - **Stack:** Python, Tkinter, MCP over stdio
 - **Setup:** [Requirements and how to run](collaborator-mcp/REQUIREMENTS.md)
+- **License:** [Free for noncommercial use](collaborator-mcp/LICENSE); commercial use or resale requires a separate paid license
 
 [![Collaborator MCP desktop app showing an orchestrator goal and helper team](collaborator-mcp/docs/collaborator-mcp.png)](collaborator-mcp/)
 
@@ -87,4 +88,4 @@ Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before openin
 
 ## License
 
-Released under the [MIT License](LICENSE). Copyright (c) 2026 KORT-X Laboratories.
+The repository-level material and projects without their own license use the [MIT License](LICENSE). FastReader and WhatsApp Local AI Autopilot have their own MIT license files. [Collaborator MCP](collaborator-mcp/LICENSE) uses the PolyForm Noncommercial License 1.0.0; commercial use or resale requires a separate paid agreement with KORT-X Laboratories. Earlier MIT releases remain under their original terms. Copyright (c) 2026 KORT-X Laboratories.

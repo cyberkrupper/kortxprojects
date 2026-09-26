@@ -86,6 +86,8 @@ def main():
 
     _run("CollaboratorMCP", "main.py", windowed=True)
     _run("collaborator-mcp", "mcp_entry.py", windowed=False)
+    shutil.copy2(os.path.join(ROOT, "LICENSE"),
+                 os.path.join(DIST, "LICENSE.txt"))
 
     print("\nBuilt:")
     for name in sorted(os.listdir(DIST)):

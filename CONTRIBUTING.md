@@ -15,4 +15,4 @@ Thanks for helping improve KORT-X Projects.
 
 Describe the problem, the chosen solution, and how you tested it. Include screenshots for visible interface changes. Keep unrelated formatting or refactoring out of the same pull request.
 
-By contributing, you agree that your contribution is licensed under the project's MIT License.
+Contributions are offered under the license that applies to the project. Check its `LICENSE` file, or the repository-level `LICENSE` if the project has none. A Collaborator MCP contribution may be included in a paid commercial edition only with the contributor's separate permission.

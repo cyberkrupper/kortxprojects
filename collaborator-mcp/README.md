@@ -64,4 +64,10 @@ python tests/ui_smoke.py
 python main.py --check-connection
 ```
 
-`python tests/live_smoke.py` uses your subscriptions for small connection tests. `python build.py` rebuilds both executables.
+`python tests/live_smoke.py` uses your subscriptions for small connection tests. `python build.py` rebuilds both executables and places `LICENSE.txt` beside them.
+
+## License
+
+Collaborator MCP is [free for noncommercial use](LICENSE) under the PolyForm Noncommercial License 1.0.0. Commercial use, including copying and selling the app or a modified version, requires a separate paid written license from KORT-X Laboratories. Contact the project owner before commercial use. No commercial license is granted by this repository.
+
+Earlier repository revisions were published under MIT. Those earlier grants remain in effect for copies obtained under them; this license change does not revoke them.
