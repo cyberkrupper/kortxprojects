@@ -52,6 +52,8 @@ A desktop app and MCP server that lets AI models work as a team: one orchestrate
 - **Stack:** Python, Tkinter, MCP over stdio
 - **Setup:** [Requirements and how to run](collaborator-mcp/REQUIREMENTS.md)
 
+[![Collaborator MCP desktop app showing an orchestrator goal and helper team](collaborator-mcp/docs/collaborator-mcp.png)](collaborator-mcp/)
+
 More projects will be added over time. Each project has its own directory, documentation, requirements, and launch instructions.
 
 ## Repository layout
